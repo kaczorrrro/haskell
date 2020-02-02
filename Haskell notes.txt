@@ -395,3 +395,12 @@ Pattern matching
 iterate :: (a -> a) -> a -> [a]
 	iterate f x returns an infinite list of repeated applications of f to x:
 	iterate f x == [x, f x, f (f x), ...]
+
+
+Type classes
+	data Foo = F Int | G Char
+
+	instance Eq Foo where
+	  (F i1) == (F i2) = i1 == i2
+	  (G c1) == (G c2) = c1 == c2
+	  _ == _ = False
