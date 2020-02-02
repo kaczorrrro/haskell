@@ -1,0 +1,397 @@
+Loading functions from files:
+	:l filename (without hs)
+	:r - reload
+	
+negavite numbers (-1)
+	5 * (-3)
+	
+&& || not True False == /=
+
+func_name arg1 arg2
+	no ( or ,
+	
+succ - successor
+min, max
+
+(max (min 1 2) (min 1 4))
+
+function call has highest precedence
+succ 9 * 10 -- 10 * 10
+
+div - integer division (rounds towards -inf)
+quot - normal integer div
+
+div 4 3 -- 1
+prefix into infix
+	4 'div' 3
+'mod' -- modulo
+^ -- pow
+	
+function definition:
+	doubleMe x = x + x
+if else
+	doubleSmall x = if x > 100 then x else doubleMe x
+else part is mandratory
+
+no arg function = definition ( ' is a normal character)
+	conanO'Brien = "It's a-me, Conan O'Brien!" 
+	
+function must start lowercase
+
+defining names (but is let necessairy?)
+	ghci> let a = ... 
+	==
+	a = ... -- inside of script
+
+lists:
+	list must be homogenous
+	a = [1,2,3]
+	string == list
+	
+	adding lists:
+		++ - costly for logner lists
+			[1,2,3,4] ++ [9,10,11,12]  
+		: - cheap, but adds only 1 elem, only to the front
+			5:[1,2,3,4,5]  
+			
+	getting list elem
+		[1,2,3] !! 2
+	list within list can differ in len, but not in type
+	
+	lists can be compared if elems inside can be compared, comp starts from head
+	
+	list functions:
+		head - first element
+		tail - rest of the list
+		init - all but last elem
+		last - last elem
+		length
+		null - check if list is empty
+		reverse
+		take n [...] - extracs n elems from beginning (or whole list)
+		drop n [...] - remove first n elems
+		maximum
+		minumum
+		sum
+		product
+		elem
+			x `elem` [...] - x is inside [...] ?
+	
+	ranges:
+		[1..4] == [1,2,3,4]
+		[1,3..10] == [1,3,5,7,9] -- range with step
+		[5,4..1] == [5,4,3,2,1] -- step can't be ommitted
+		
+		infinite range:
+			[13, 24..]
+			to get firset n multiples od 4
+			take n [4, 8..]
+		cycle [1,2,3] = [1,2,3,1,2,3,1,2,3 ...
+		repeat 5 = [5,5,5,5,5...
+		replicate 3 10 = [10,10,10] == take 3 (repeat 10)
+		
+	list comprehensions:
+		[x*2 | x <- [1..5]] == [2,4,6,8,10]
+		[x*2 | x <- [1..10], x*2 >= 12]  = [12,14,16,18,20]
+			
+		as function:
+			[if x > 10 then ">10" else  "<10" | x <- xs, odd x]
+		
+		[x | x <- [1..20], odd x, even x] == [] -- all predicates have to be met
+		
+		we can use many input lists
+		[x*y | x<-[1..10], y<-[1..10]] -- 100 outputs
+		[ [x,y] | x<-['a', 'b', 'c'], y<-['d', 'e']]
+			== ["ad","ae","bd","be","cd","ce"]
+		[1 | _ <- x] -- variable we don't care about _
+		
+		nested list comprehensions:
+			nestedListDouble xxs = [[x*2 | x<- xs] | xs <- xxs]
+	tuples ()
+		(1, 'a') - tuple of type (int, chart)
+		fst (1, 2) == 1
+		snd (1, 2) == 2
+		//fst, snd work only on pairs
+		
+		zip list1 list2 -- only 2 lists :(
+			return list of tuples with len = min(len(l1), min(l2))
+		
+		numbering items:
+			zip [1..] [elements...]
+
+Type:
+	:t variable -- print stype
+	function type Arg1T -> Arg2T -> ReturnT
+	Types (start from Uppercase):
+		Int - 32bit int (64 at my pc)
+		Integer - unlimited
+		Float - 32bit
+		Double - 64 bit
+		Bool
+		Char
+	
+	:: -- read "has type of"
+	
+	:t head  
+		head :: [a] -> a  -- function template, a is a variable
+		
+	:t (==)  -- wrap infix == as function (==)
+		(==) :: (Eq a) => a -> a -> Bool  
+		Eq a - Eq class, a variables must be members of Eq class
+		=> type constraint
+	
+	Typeclasses
+		Eq: == /=
+		Ord: > < >= <=
+		Ordering  - class with values GT LT EQ
+			"Abrakadabra" `compare` "Zebra"  
+				LT
+		Show - can be shown as string, func: show 
+			show 5.334  
+				"5.334"
+		Read - can be read from string
+			read "8.2" + 3.8  
+				12.0  
+			read "[1,2,3,4]" ++ [3]  
+				[1,2,3,4,3]  
+			read "4"
+				produces error, since we GHCI doesn't know what type we want
+				(earlier type was inferred from operations)
+			read "5" :: Int -- solution
+		Enum - sequentially ordered type, can be used in [a..b]
+			(), Bool, Char, Ordering, Int, Integer, Float and Double.
+			functions: succ, pred
+		Bounded - hae max and min values
+			Int, Char, Bool
+			tuples have bound if its elems have bound
+		Num - numerical values
+			:t (*)  
+				(*) :: (Num a) => a -> a -> a  
+		Integral, Floating
+		fromIntegral --  convert integral to Number
+		
+Function definition with explicit type:
+	removeNonUppercase :: [Char] -> [Char]  
+	removeNonUppercase st = [ c | c <- st, c `elem` ['A'..'Z']]   
+	or
+	addThree :: Int -> Int -> Int -> Int  
+	addThree x y z = x + y + z  
+		
+		
+Functions
+	Pattern matching
+		Pattern is matched from top to bottom
+			lucky :: (Integral a) => a -> String  
+			lucky 7 = "LUCKY NUMBER SEVEN!"  
+			lucky x = "Sorry, you're out of luck, pal"
+		
+		All cases must be handled
+		
+		Advanced matching
+			tell :: (Show a) => [a] -> String  
+			tell [] = "The list is empty"  
+			tell (x:[]) = "The list has one element: " ++ show x  
+			tell (x:y:[]) = "The list has two elements: " ++ show x ++ " and " ++ show y  
+			tell (x:y:_) = "This list is long. The first two elements are: " ++ show x ++ " and " ++ show y  
+		
+		Inside list comprehension
+			[a+b | (a,b) <- xs]  
+		
+		[1,2,3] same as  1:2:3:[]
+		
+		(head:tail) = list -- very typical
+		all@(x:xs) -- also reference matched stuff as a whole
+	
+	Guards example
+		bmiTell :: (RealFloat a) => a -> String  
+		bmiTell bmi  
+			| bmi <= 18.5 = "You're underweight, you emo, you!"  
+			| bmi <= 25.0 = "You're supposedly normal. Pffft, I bet you're ugly!"  
+			| bmi <= 30.0 = "You're fat! Lose some weight, fatty!"  
+			| otherwise   = "You're a whale, congratulations!" 
+		(no = after bimTell bmi)
+		
+	Function can be defined infix
+		a `myCompare` b  
+			| a > b     = GT  
+			| a == b    = EQ  
+			| otherwise = LT  
+	
+	Where example
+		bmiTell weight height  
+			| bmi <= skinny = "You're underweight, you emo, you!"  
+			| bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"  
+			| bmi <= fat    = "You're fat! Lose some weight, fatty!"  
+			| otherwise     = "You're a whale, congratulations!"  
+			where bmi = weight / height ^ 2  
+				  skinny = 18.5  
+				  normal = 25.0  
+				  fat = 30.0 
+				  
+	Where can also contain function
+	    calcBmis :: (RealFloat a) => [(a, a)] -> [a]  
+		calcBmis xs = [bmi w h | (w, h) <- xs]  
+			where bmi weight height = weight / height ^ 2  
+	
+	Let bindings - limited in scope if used with "in" clause
+		cylinder :: (RealFloat a) => a -> a -> a  
+		cylinder r h = 
+			let sideArea = 2 * pi * r * h  
+				topArea = pi * r ^2  
+			in  sideArea + 2 * topArea  
+			
+		The difference is that let bindings are expressions themselves. where bindings are just syntactic constructs
+			4 * (let a = 9 in a + 1) + 2
+			[let square x = x * x in (square 5, square 3, square 2)]  
+		
+		Multiple definitions
+			let a = 100; b = 200; c = 300 in a*b*c
+		
+		Bindings work here too
+			let (a,b,c) = (1,2,3)
+			
+		Inside list comprehension
+			calcBmis :: (RealFloat a) => [(a, a)] -> [a]  
+			calcBmis xs = [bmi | (w, h) <- xs, let bmi = w / h ^ 2, bmi >= 25.0]  
+			
+	Case matching
+		describeList :: [a] -> String  
+		describeList xs = "The list is " ++ case xs of [] -> "empty."  
+													   [x] -> "a singleton list."   
+													   xs -> "a longer list."
+													   - -> "Everything else"
+	
+	
+	
+
+Defining a type
+	data Bool = False | True  -- type definition with possible values
+		| OR
+	data Shape = Circle Float Float Float | Rectangle Float Float Float Float 
+		(here Shape is a type, but Circle is not (Circle is value construcor)
+		
+	Export 
+		module Shapes   
+			( Point(..)  
+			, Shape(..)  
+			, surface  
+			, nudge  
+			, baseCircle  
+			, baseRect  
+			) where  
+	
+Happy learn haskell
+Main:
+	main :: IO () -- just for information, never needed to be written
+	main = putStrLn "Polly wants a cracker"
+	
+	() - Unit type (Empty tuple), both type and value
+(+) -- () turns infix into prefix
+
+Using partially applied function
+	plus6'' :: Int -> Int
+	plus6'' number = (+6) number
+	
+
+If / cases and others
+	If else [Expression]
+	Case expressions [Expression]
+		case name of
+			"Dave" -> "I can't do that."
+			"Sam"  -> "Play it again."
+			_      -> "Hello."
+	Guard patterns
+		message :: String -> String
+		message name
+		  | name == "Dave" = "I can't do that."
+		  | name == "Sam"  = "Play it again."
+		  | otherwise      = "Hello."
+	Pattern matching
+		message :: String -> String
+		message "Dave" = "I can't do that."
+		message "Sam"  = "Play it again."
+		message _      = "Hello."
+
+
+
+
+
+
+CS 194
+
+i = maxBound -- doesn't work
+i = maxBound :: Int -- works as expected (2**63)
+
+Int - regular int
+Integer - unlimited
+Double, Float, Bool, Char
+
+show x - shows x
+length x - length x
+
+Ugly stuff
+	neg numbers - (-1)
+	int division- div 2 1 or 2 `div` 1
+
+Explicic conversions
+	fromIntegral: converts from any integral type (Int or Integer) to any other numeric type.
+	round, floor, ceiling: convert floating-point numbers to Int or Integer.
+
+Bools: && || not == /=
+	if bool then a else b
+
+Enum 
+data Thing = Shoe 
+           | Ship 
+           | SealingWax 
+           | Cabbage 
+           | King
+  deriving Show
+
+Algebraic dtype
+	data FailableDouble = Failure
+	                    | OK Double
+	  deriving Show
+
+	This dtype has 2 ctors: 
+		Failure (no arg ctor) -> Failure is a value of FailableDouble
+		OK (1 arg ctor) -> OK is not a value of FailableDouble, but OK 1.2 is
+
+	Example use
+		safeDiv :: Double -> Double -> FailableDouble
+		safeDiv _ 0 = Failure
+		safeDiv x y = OK (x / y)
+
+		failureToZero :: FailableDouble -> Double
+		failureToZero Failure = 0
+		failureToZero (OK d)  = d
+
+	Sometimes Ctor name is the same as type name
+
+Pattern matching
+	Pattern matching is a way to distingush between different ctors that were used
+		foo (Constr1 a b)   = ...
+		foo (Constr2 a)     = ...
+		foo (Constr3 a b c) = ...
+		foo Constr4         = ...
+
+	x@pat allows name matched the object
+		p@(Person n _ _)
+
+	In general, folowwing patterns can be matched
+	pat ::= _
+     |  var
+     |  var @ ( pat )
+     |  ( Constructor pat1 pat2 ... patn )
+
+     Case expression: pattern matching without function
+	     case exp of
+		  pat1 -> exp1
+		  pat2 -> exp2
+		Function = syntax sugar for case expression  
+
+
+
+iterate :: (a -> a) -> a -> [a]
+	iterate f x returns an infinite list of repeated applications of f to x:
+	iterate f x == [x, f x, f (f x), ...]
